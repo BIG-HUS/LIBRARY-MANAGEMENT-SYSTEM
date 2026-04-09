@@ -17,4 +17,6 @@ const bookSchema = new mongoose.Schema({
     issuedBy: {type: mongoose.Schema.Types.ObjectId, ref:"attendant"},
 
     returnDate: {type: Date, default: null},
-})
+}, {timestamps: true})
+
+module.exports = mongoose.model("book", bookSchema);
