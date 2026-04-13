@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-exports.connectDb = async () => {
+const connectDb = async () => {
     try{
         //connect node.js to mongoDB using mongoose
         const con = await mongoose.connect(process.env.mongoDB);
@@ -13,3 +13,5 @@ exports.connectDb = async () => {
         process.exit(1); //terminate process
     }
 }
+
+module.exports = connectDb;
