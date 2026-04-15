@@ -13,6 +13,12 @@ const studentSchema = new mongoose.Schema({
         unique: true,
         trim: true
     },
+
+    studentId: {
+        type: String,
+        required: true,
+        unique: true
+    }
 },
 
 {

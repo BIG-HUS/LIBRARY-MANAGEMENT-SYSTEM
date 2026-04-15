@@ -13,7 +13,7 @@ const connectDb = require("./config/database.js");
 connectDb();
 
 //IMPORT ROUTES
-const studentRoutes = require('./routes/student.route')
+const studentRoutes = require('./routes/student.route');
 
 
 //USE ROUTES

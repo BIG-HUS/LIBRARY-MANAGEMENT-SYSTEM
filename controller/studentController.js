@@ -1,5 +1,5 @@
 const Student = require("../models/student");
-const {generateStudentId}= require("../services/studentIdService");
+const {generateStudentId}  = require("../services/studentIdService");
 
 //function declaration for handling a POST/Student request
 const createStudent = async (req,res) => {
@@ -15,14 +15,14 @@ const createStudent = async (req,res) => {
         const existingStudentEmail = await Student.findOne({ email: email});
 
         if (existingStudentEmail){
-            return res.status(409).json({error: 'Email already exists'})
+            return res.status(409).json({error: 'Email already exists'});
         }
 
         //generate studentID
-        const studentID = generateStudentId;
+        const studentID = await generateStudentId();
 
-        //create student is Database 
-        const newStudent = await Student.create({...req.body, studentID});
+        //create student in Database 
+        const newStudent = await Student.create({...req.body, studentId: studentID});
 
         //Return success response
         res.status(201).json({
@@ -48,7 +48,7 @@ const getAllStudent = async (req,res) => {
        const skip = (page - 1) * limit;
 
        //Fetching student from database
-       const students = Student.find()
+       const students = await Student.find()
        .skip(parseInt(skip))
        .limit(parseInt(limit))
        .select('-__v') //hides the __v field(MongoDB's internal version key)
@@ -77,4 +77,27 @@ const getAllStudent = async (req,res) => {
     }
 }
 
-module.exports = createStudent;
+
+const getStudentById = async (req,res) => {
+    try{
+        const getStudentId = req.params.id; //gets ID from URL parameter
+
+        const student = await Student.findById(getStudentId);
+
+        if(!student){
+            res.status(404).json({error:"Student does not exist"})
+        }
+
+        res.status(200).json({data: student});
+    }
+    
+    catch(err){
+        res.status(400).json({error: err.message});
+    }
+}
+
+module.exports = {
+    createStudent,
+    getAllStudent,
+    getStudentById
+};
