@@ -96,8 +96,44 @@ const getStudentById = async (req,res) => {
     }
 }
 
+const updateStudent = async(req,res) => {
+    try{
+        const studentId = req.params.id;
+        const{name,email} = req.body;
+
+        //validate the input
+        if (!name && !email){
+            res.status(400).json({error: "At least one field is required"})
+        };
+
+        const studentUpdate = await Student.findByIdAndUpdate(
+            studentId,
+            {
+                ...(name && {name: name.trim()}), //if name exists
+                ...(email && {email: email.trim()}) // if email exists
+            },
+            {new: true} //Return the updated document
+        );
+
+        //if student exists
+        if (!studentUpdate){
+            res.status(400).json({error: 'Student not found'});
+        };
+
+        res.status(200).json({
+            message: "Student updated successfully",
+            data: studentUpdate
+        });
+    }
+
+    catch(err){
+        res.status(500).json({error: err.message})
+    }
+}
+
 module.exports = {
     createStudent,
     getAllStudent,
-    getStudentById
+    getStudentById,
+    updateStudent
 };
