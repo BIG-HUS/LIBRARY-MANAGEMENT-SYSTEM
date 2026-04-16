@@ -85,7 +85,7 @@ const getStudentById = async (req,res) => {
         const student = await Student.findById(getStudentId);
 
         if(!student){
-            res.status(404).json({error:"Student does not exist"})
+           return  res.status(404).json({error:"Student does not exist"})
         }
 
         res.status(200).json({data: student});
@@ -95,7 +95,6 @@ const getStudentById = async (req,res) => {
         res.status(400).json({error: err.message});
     }
 }
-
 const updateStudent = async(req,res) => {
     try{
         const studentId = req.params.id;
@@ -103,7 +102,7 @@ const updateStudent = async(req,res) => {
 
         //validate the input
         if (!name && !email){
-            res.status(400).json({error: "At least one field is required"})
+            return res.status(400).json({error: "At least one field is required"})
         };
 
         const studentUpdate = await Student.findByIdAndUpdate(
@@ -131,9 +130,28 @@ const updateStudent = async(req,res) => {
     }
 }
 
+
+const deleteStudent = async (req,res) => {
+    try{
+        const studentId = req.params.id;
+
+        const deletedStudent = await Student.findByIdAndDelete(studentId);
+
+        if (!deletedStudent){
+            res.status(400).json({message: "Student not found"})
+        };
+
+        res.status(200).json({message: "Student deleted Successfully", data: deletedStudent});
+    }
+
+    catch(err){
+        res.status(500).json({error: err.message});
+    }
+}
 module.exports = {
     createStudent,
     getAllStudent,
     getStudentById,
-    updateStudent
+    updateStudent,
+    deleteStudent
 };
