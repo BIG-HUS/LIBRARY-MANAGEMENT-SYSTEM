@@ -1,32 +1,30 @@
 const Book = require("../models/book");
+const Author = require("../models/author");
 
-exports.borrowBook = async (req,res) => {
-    try{
-        const{studentId,attendantId,returnDate} = req.body;
+const createBook = async (req,res) => {
+    const{title,isbn,author} = req.body
 
-        const book = await Book.findById(req.params.id);
-
-        if (!book) {
-            return res.status(400).json({message: "Book not found"})
-        }
-
-        if (book.status === "OUT"){
-            return res.status(400).json({message: "Book is already borrowed"})
-        }
-
-        book.status = "OUT";
-        book.borrowedBy = studentId;
-        book.issuedBy = attendantId;
-        book.returnDate = returnDate;
-
-        await book.save();
-
-        return res.status(200).json({message: "Book borrowed successfully"});
+    if(!title || !isbn) {
+        return res.status(400).json({error: "Title and ISBN must be filled"}) 
     }
 
-    catch(err)
-    {
-        return res.status(500).json({message: "Error Occured"});
-        //return res.status(500).json({message: err.message})
+    const checkTitle = await Book.findOne({title: title});
+    const checkIsbn = await Book.findOne({ISBN: isbn});
+    //const checkAuthor = await Book.findOne({Author: author})
+
+    if(checkTitle && checkIsbn) {
+        return res.status(400).json({error: "Book already exists"});
     }
+
+    const newBook = await Book.create({...req.body, AuthorId: author});
+
+    res.status(200).json({
+        message: "Book created successfully",
+        data: newBook
+    });
+}
+
+
+module.exports = {
+    createBook,
 }

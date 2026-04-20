@@ -15,12 +15,14 @@ connectDb();
 //IMPORT ROUTES
 const studentRoutes = require('./routes/student.route');
 const authorRoutes = require('./routes/author.route');
+const bookRoutes = require('./routes/book.route.js')
 
 
 
 //USE ROUTES
 app.use('/students', studentRoutes);
 app.use('/authors', authorRoutes);
+app.use('/books', bookRoutes);
 
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);

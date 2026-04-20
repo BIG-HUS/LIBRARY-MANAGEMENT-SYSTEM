@@ -79,7 +79,7 @@ const getAuthorsById = async (req,res) => {
         res.status(201).json({
             message: "Author retrieved successfully",
             data: uniqueAuthorId
-        })
+        });
     }
 
     catch(err){
@@ -87,8 +87,65 @@ const getAuthorsById = async (req,res) => {
     }
 }
 
+const updateAuthor = async (req,res) => {
+    try{
+        const authorId = req.params.id;
+        const{name,bio} = req.body;
+
+        if(!name && !bio){
+            return res.status(400).json({message:"At least One field is required"})
+        }
+
+        const updatedAuthor = await author.findByIdAndUpdate(
+            authorId,
+            {
+                ...(name && {name: name}),
+                ...(bio && {bio: bio})
+            }, 
+
+            {new: true}
+        )
+        if(!updatedAuthor){
+            return res.status(400).json({error: "Author not found"})
+        };
+
+        res.status(200).json({
+            message: "Update Success",
+            data: updatedAuthor
+        });
+
+    }
+
+    catch(err){
+        res.status(500).json({error: err.message});
+    }
+}
+
+const deleteAuthor = async (req,res) => {
+    try{
+        const authorId = req.params.id;
+
+        if (!authorId){
+            return res.status(400).json({error: "Author does not exist"});
+        }
+
+        const deletedAuthor = await author.findByIdAndDelete(authorId);
+
+        res.status(200).json({
+            message: "Author deleted successfully",
+            data: deletedAuthor
+        });
+    }
+
+    catch(err){
+        res.status(500).json({error: err.message})
+    };
+}
+
 module.exports = {
     createAuthor,
     getAllAuthors,
-    getAuthorsById
-}
+    getAuthorsById,
+    updateAuthor,
+    deleteAuthor
+};
