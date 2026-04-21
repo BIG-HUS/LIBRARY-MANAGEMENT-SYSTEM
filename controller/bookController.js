@@ -87,9 +87,46 @@ const getBookById = async (req,res) => {
     }
 }
 
+const updateBook = async (req,res) => {
+    try{
+        const updateId = req.params.id;
+        const{title,isbn} = req.body;
+
+        if(!title && !isbn){
+            return res.status(400).json({error: "At least one field must be updated"});
+        };
+
+        const updated = await Book.findByIdAndUpdate(
+            updateId,
+            {
+            ...(title && {title: title}),
+            ...(isbn && {isbn: isbn})
+            },
+
+            {new: true}
+        )
+
+        if(!updated){
+            return res.status(400).json({error: "Book not found"});
+        }
+
+        res.status(200).json({
+            message: "Book updated successfully",
+            data: updated
+        })
+
+
+    }
+
+    catch(err){
+        res.status(500).json({error: err.message});
+    }
+}
+
 
 module.exports = {
     createBook,
     getAllBooks,
-    getBookById
+    getBookById,
+    updateBook
 }
